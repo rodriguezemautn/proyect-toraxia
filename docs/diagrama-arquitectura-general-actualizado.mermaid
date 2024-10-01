@@ -1,0 +1,81 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#00b1c7', 'secondaryColor': '#414042', 'tertiaryColor': '#6c757d', 'primaryBorderColor': '#00c2db'}}}%%
+graph TB
+    subgraph "Frontend"
+        UI[Interfaz de Usuario React]
+    end
+
+    subgraph "API Gateway"
+        APIG[Nginx API Gateway]
+    end
+
+    subgraph "Autenticación"
+        AUTH[Servicio de Autenticación Keycloak]
+    end
+
+    subgraph "Microservicios"
+        MS_USER[Gestión de Usuarios]
+        MS_PATIENT[Gestión de Pacientes]
+        MS_STUDY[Gestión de Estudios]
+        MS_IMAGE[Procesamiento de Imágenes]
+        MS_CLASS[Clasificación de Imágenes ML]
+        MS_REPORT[Generación de Informes]
+    end
+
+    subgraph "Bases de Datos"
+        DB[(PostgreSQL)]
+        CACHE[(Redis Cache)]
+    end
+
+    subgraph "Almacenamiento"
+        MINIO[MinIO Object Storage]
+    end
+
+    subgraph "Mensajería"
+        RMQ[RabbitMQ]
+    end
+
+    subgraph "Monitoreo"
+        ELK[ELK Stack]
+    end
+
+    subgraph "Sistemas Externos"
+        HIS[Sistema de Información Hospitalaria]
+    end
+
+    UI --> APIG
+    APIG --> AUTH
+    APIG --> MS_USER
+    APIG --> MS_PATIENT
+    APIG --> MS_STUDY
+    APIG --> MS_IMAGE
+    APIG --> MS_CLASS
+    APIG --> MS_REPORT
+
+    MS_USER --> DB
+    MS_PATIENT --> DB
+    MS_STUDY --> DB
+    MS_IMAGE --> MINIO
+    MS_CLASS --> MINIO
+    MS_CLASS --> CACHE
+    MS_REPORT --> DB
+
+    MS_IMAGE --> RMQ
+    MS_CLASS --> RMQ
+
+    MS_USER --> ELK
+    MS_PATIENT --> ELK
+    MS_STUDY --> ELK
+    MS_IMAGE --> ELK
+    MS_CLASS --> ELK
+    MS_REPORT --> ELK
+
+    MS_PATIENT -.-> HIS
+    MS_STUDY -.-> HIS
+
+    classDef primary fill:#00b1c7,stroke:#00c2db,stroke-width:2px,color:#fff;
+    classDef secondary fill:#414042,stroke:#00c2db,stroke-width:2px,color:#fff;
+    classDef tertiary fill:#6c757d,stroke:#00c2db,stroke-width:2px,color:#fff;
+    
+    class UI,APIG,AUTH,MS_USER,MS_PATIENT,MS_STUDY,MS_IMAGE,MS_CLASS,MS_REPORT primary;
+    class DB,CACHE,MINIO,RMQ,ELK secondary;
+    class HIS tertiary;
